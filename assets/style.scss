@@ -1,0 +1,21 @@
+* {
+    font-family: Roboto, Arial, sans-serif;
+}
+body {
+    overflow: hidden;
+    font-family: Roboto, Arial, sans-serif;
+}
+.vjs-has-started.vjs-user-inactive.vjs-playing .vjs-control-bar {
+    opacity: 1;
+    height: 30px;
+}
+.vjs-has-started.vjs-user-inactive.vjs-playing .vjs-control-bar > * {
+    opacity: 0;
+}
+.vjs-has-started.vjs-user-inactive.vjs-playing .vjs-control-bar .vjs-progress-control {
+    opacity: 1;
+}
+
+.grey--text {
+    color: #5a5a5a;
+}
