@@ -256,7 +256,7 @@
                   :url="`${origin}/videos/${selectedVideo && selectedVideo.id}`"
                   :title="selectedVideo && selectedVideo.title"
                 >
-                  <v-img src="~/static/facebook.png" width="80px" />
+                  <img src="~/static/facebook.png" width="80px" />
                 </ShareNetwork>
               </v-col>
               <v-col cols="6" sm="4" class="d-flex justify-center">
@@ -265,7 +265,7 @@
                   :url="`${origin}/videos/${selectedVideo && selectedVideo.id}`"
                   :title="selectedVideo && selectedVideo.title"
                 >
-                  <v-img src="~/static/whatsapp.png" width="80px" />
+                  <img src="~/static/whatsapp.png" width="80px" />
                 </ShareNetwork>
               </v-col>
               <v-col cols="6" sm="4" class="d-flex justify-center">
@@ -274,7 +274,7 @@
                   :url="`${origin}/videos/${selectedVideo && selectedVideo.id}`"
                   :title="selectedVideo && selectedVideo.title"
                 >
-                  <v-img src="~/static/email.png" width="80px" />
+                  <img src="~/static/email.png" width="80px" />
                 </ShareNetwork>
               </v-col>
               <v-col cols="6" sm="4" class="d-flex justify-center d-sm-none">
@@ -283,7 +283,7 @@
                   :url="`${origin}/videos/${selectedVideo && selectedVideo.id}`"
                   :title="selectedVideo && selectedVideo.title"
                 >
-                  <v-img src="~/static/sms.png" width="80px" />
+                  <img src="~/static/sms.png" width="80px" />
                 </ShareNetwork>
               </v-col>
             </v-row>
@@ -295,9 +295,6 @@
 </template>
 
 <script>
-// import VueSlickCarousel from "vue-slick-carousel";
-// import "vue-slick-carousel/dist/vue-slick-carousel.css";
-// import "vue-slick-carousel/dist/vue-slick-carousel-theme.css";
 import { mapGetters, mapActions } from "vuex";
 import VideoItem from "~/components/VideoItem";
 // import Sidebar from "~/components/Sidebar";
@@ -610,7 +607,9 @@ export default {
     }
   },
   destroyed() {
-    window.removeEventListener("resize", this.resizeHandler);
+    if (process.browser) {
+      window.removeEventListener("resize", this.resizeHandler);
+    }
   },
   created() {
     if (process.browser) {

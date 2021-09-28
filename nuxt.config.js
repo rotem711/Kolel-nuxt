@@ -36,7 +36,7 @@ export default {
   plugins: [
     '~/plugins/filters.js',
     { src: '~/plugins/vue-slick-carousel', ssr: false },
-    // { src: '~/plugins/social-sharing.js', ssr: true },
+    '~/plugins/social-sharing.js',
     { src: './plugins/vue-google-oauth2', ssr: false },
     '~/plugins/vue-observe-visibility'
   ],

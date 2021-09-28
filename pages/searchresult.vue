@@ -8,7 +8,7 @@
       <v-col cols="12">
         <div
           aria-controls
-          class="d-flex video-item mb-5"
+          class="d-flex flex-column flex-sm-row video-item mb-5"
           v-for="(item, index) in videoItems"
           :key="index"
         >
@@ -65,7 +65,7 @@ export default {
     keyword: null,
     searchResultLoaded: false,
     total: 0,
-    pageSize: 5,
+    pageSize: 7,
     loading: false
   }),
   watch: {
@@ -158,10 +158,10 @@ export default {
   }
 
   .video-item--image {
-    max-width: 400px;
+    width: 400px;
 
     @media (max-width: 1264px) {
-      max-width: 300px;
+      width: 300px;
     }
   }
 }

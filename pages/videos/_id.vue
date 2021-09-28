@@ -69,7 +69,7 @@
       <v-card>
         <v-card-title>
           <span class="headline">{{ $t('Choose social media') }}</span>
-          <v-btn class="mr-3 mt-sm-0 mt-2" @click="copyTextToClipboard(`${window.location.origin}/videos/${currentVideoItem && currentVideoItem.id}`)" outlined>{{ $t('Copy link to clipboard') }}</v-btn>
+          <v-btn class="mr-3 mt-sm-0 mt-2" @click="copyTextToClipboard(`${origin}/videos/${currentVideoItem && currentVideoItem.id}`)" outlined>{{ $t('Copy link to clipboard') }}</v-btn>
         </v-card-title>
         <v-card-text>
           <v-container>
@@ -77,37 +77,37 @@
               <v-col cols="6" sm="4" class="d-flex justify-center">
                 <ShareNetwork
                   network="facebook"
-                  :url="`${window.location.origin}/videos/${currentVideoItem && currentVideoItem.id}`"
+                  :url="`${origin}/videos/${currentVideoItem && currentVideoItem.id}`"
                   :title="currentVideoItem && currentVideoItem.title"
                 >
-                  <v-img src="~/static/facebook.png" width="80px" />
+                  <img src="~/static/facebook.png" width="80px" />
                 </ShareNetwork>
               </v-col>
               <v-col cols="6" sm="4" class="d-flex justify-center">
                 <ShareNetwork
                   network="WhatsApp"
-                  :url="`${window.location.origin}/videos/${currentVideoItem && currentVideoItem.id}`"
+                  :url="`${origin}/videos/${currentVideoItem && currentVideoItem.id}`"
                   :title="currentVideoItem && currentVideoItem.title"
                 >
-                  <v-img src="~/static/whatsapp.png" width="80px" />
+                  <img src="~/static/whatsapp.png" width="80px" />
                 </ShareNetwork>
               </v-col>
               <v-col cols="6" sm="4" class="d-flex justify-center">
                 <ShareNetwork
                   network="Email"
-                  :url="`${window.location.origin}/videos/${currentVideoItem && currentVideoItem.id}`"
+                  :url="`${origin}/videos/${currentVideoItem && currentVideoItem.id}`"
                   :title="currentVideoItem && currentVideoItem.title"
                 >
-                  <v-img src="~/static/email.png" width="80px" />
+                  <img src="~/static/email.png" width="80px" />
                 </ShareNetwork>
               </v-col>
               <v-col cols="6" sm="4" class="d-flex justify-center d-sm-none">
                 <ShareNetwork
                   network="SMS"
-                  :url="`${window.location.origin}/videos/${currentVideoItem && currentVideoItem.id}`"
+                  :url="`${origin}/videos/${currentVideoItem && currentVideoItem.id}`"
                   :title="currentVideoItem && currentVideoItem.title"
                 >
-                  <v-img src="~/static/sms.png" width="80px" />
+                  <img src="~/static/sms.png" width="80px" />
                 </ShareNetwork>
               </v-col>
             </v-row>
@@ -125,11 +125,13 @@ import CopyToClipboard from "~/mixins/CopyToClipboard";
 
 export default {
   name: "Video",
+  layout: "DefaultLayout",
   mixins: [ CopyToClipboard ],
   components: {
     Player,
   },
   data: () => ({
+    origin: null,
     currentVideoItem: null,
     item: null,
     thumbnails: {
@@ -152,7 +154,6 @@ export default {
     videoItems: [],
     isMobile: true,
     shareDialog: false,
-    window: window
   }),
   watch: {
     "$route.params": {
@@ -168,12 +169,14 @@ export default {
     ...mapActions("category", ["getCategoryVideoList"]),
     resetHeight(playerHeight) {
       let count;
-      if (window.innerWidth > 1400) {
-        count = Math.floor(playerHeight / 105);
-      } else if (window.innerWidth > 1100) {
-        count = Math.floor(playerHeight / 95);
-      } else {
-        count = Math.floor(playerHeight / 85);
+      if (process.browser) {
+        if (window.innerWidth > 1400) {
+          count = Math.floor(playerHeight / 105);
+        } else if (window.innerWidth > 1100) {
+          count = Math.floor(playerHeight / 95);
+        } else {
+          count = Math.floor(playerHeight / 85);
+        }
       }
       this.recentVideoCount = count;
     },
@@ -205,7 +208,10 @@ export default {
     }
   },
   created() {
-    this.isMobile = window.innerWidth < 600 ? true : false;
+    if (process.browser) {
+      this.origin = window.location.origin;
+      this.isMobile = window.innerWidth < 600 ? true : false;
+    }
   },
   async mounted() {
     this.initialize();
