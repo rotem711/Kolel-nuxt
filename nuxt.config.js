@@ -21,7 +21,10 @@ export default {
       { rel: 'stylesheet', href: 'https://fonts.googleapis.com/css?family=Roboto' },
       { rel: 'stylesheet', href: 'https://cdn.jsdelivr.net/npm/@mdi/font@latest/css/materialdesignicons.min.css' },
       { rel: 'stylesheet', href: 'https://players.brightcove.net/videojs-thumbnails/1/videojs-thumbnails.css' }
-    ]
+    ],
+    script: [
+      { src: "facebook-pixel-code.js" }
+    ],
   },
 
   // Global CSS: https://go.nuxtjs.dev/config-css

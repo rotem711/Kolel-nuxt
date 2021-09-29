@@ -169,7 +169,7 @@ export default {
             is_admin: res.user.is_admin
           }
           localStorage.setItem('user', JSON.stringify(userInfo));
-          this.$router.push({ path: "/" });
+          this.$router.push("/");
         } else {
           // handle error
           console.log(res);
@@ -196,7 +196,7 @@ export default {
             is_admin: res.user.is_admin
           }
           localStorage.setItem('user', JSON.stringify(userInfo));
-          this.$router.push({ path: "/" });
+          this.$router.push("/");
         } else {
           // handle error
           console.log(res);
