@@ -1,6 +1,3 @@
-import APIService from "~/http.js";
-const API = new APIService();
-
 export const state = () => ({
     Sidebar_drawer: null,
     Customizer_drawer: false,
@@ -50,7 +47,7 @@ export const actions = {
     },
     async getTos({ commit }) {
         let headers = { 'content-type': 'application/x-www-form-urlencoded' };
-        let result = await API.get(`/tos`, headers, 'text');
+        let result = await this.$axios.get(`/tos`, headers, 'text');
         return result.data;
     },
 }

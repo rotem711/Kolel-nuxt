@@ -80,7 +80,7 @@ export default {
     },
 
     calculateItemPerRow() {
-      let itemCount = 0; 
+      let itemCount = 1; 
       if (process.browser) {
         for (let i = 0; i < this.breakpoints.length; i ++) {
           if (window.innerWidth > this.breakpoints[i].width && itemCount < this.breakpoints[i].itemsPerRow) {
@@ -99,12 +99,12 @@ export default {
       let payload = {
         categoryId: this.$route.params.id,
         limit: limit,
-        offset: this.videoItems[0].id == null ? 0 : this.videoItems.length
+        offset: this.videoItems.length > 0 && this.videoItems[0].id == null ? 0 : this.videoItems.length
       }
 
       this.getCategoryVideoList(payload).then(res => {
         let items = res.videos;
-        if (!this.videoItems[0].id) {
+        if (this.videoItems.length > 0 && !this.videoItems[0].id) {
           this.videoItems = [ ...items];
         } else {
           this.videoItems = [...this.videoItems, ...items];
@@ -158,10 +158,10 @@ export default {
       this.isMobile = window.innerWidth < 600 ? true : false;
     }
   },
-  async mounted() {
+  async fetch() {
     this.showTempData();
     this.initialize();
-  },
+  }
 };
 </script>
 

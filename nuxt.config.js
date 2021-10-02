@@ -38,10 +38,11 @@ export default {
   // Plugins to run before rendering page: https://go.nuxtjs.dev/config-plugins
   plugins: [
     '~/plugins/filters.js',
-    { src: '~/plugins/vue-slick-carousel', ssr: false },
+    { src: '~/plugins/vue-slick-carousel' },
     '~/plugins/social-sharing.js',
     { src: './plugins/vue-google-oauth2', ssr: false },
-    '~/plugins/vue-observe-visibility'
+    '~/plugins/vue-observe-visibility',
+    '~/plugins/axios'
   ],
 
   // Auto import components: https://go.nuxtjs.dev/config-components
@@ -57,12 +58,18 @@ export default {
   // Modules: https://go.nuxtjs.dev/config-modules
   modules: [
     '@nuxtjs/i18n',
+    '@nuxtjs/axios',
+    'cookie-universal-nuxt'
   ],
 
   i18n: {
     locales: ['en', 'he'],
     defaultLocale: 'he',
     vueI18n: i18n
+  },
+
+  axios: {
+    baseURL: process.env.VUE_APP_API_URL
   },
 
   // Vuetify module configuration: https://go.nuxtjs.dev/config-vuetify

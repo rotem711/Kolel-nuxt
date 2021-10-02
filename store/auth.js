@@ -1,6 +1,3 @@
-import APIService from "~/http.js";
-const API = new APIService();
-
 export const state = () => ({
     user: null,
     token: null,
@@ -23,17 +20,17 @@ export const mutations = {
 
 export const actions = {
     async getResetPasswordLink ({ commit }, payload) {
-        var result = await API.post('/users/forgot_password.json', payload);
+        var result = await this.$axios.post('/users/forgot_password.json', payload);
         return result.data;
     },
 
     async setNewPassword ({ commit }, payload) {
-        var result = await API.post('/users/set_new_password', payload);
+        var result = await this.$axios.post('/users/set_new_password', payload);
         return result.data;
     },
 
     async signUser ({ commit }, payload) {
-        var result = await API.post('/users/login', payload);
+        var result = await this.$axios.post('/users/login', payload);
         if (result.data && result.data.token) {
             commit("SET_TOKEN", result.data.token);
         }
@@ -44,12 +41,12 @@ export const actions = {
     },
 
     async signAnonymous ({ commit }) {
-        var result = await API.post('/users/signup_anonymous', { device: 'web' });
+        var result = await this.$axios.post('/users/signup_anonymous', { device: 'web' });
         return result.data;
     },
 
     async signUp ({ commit }, payload) {
-        var result = await API.post('/users', payload);
+        var result = await this.$axios.post('/users', payload);
         if (result.data && result.data.token) {
             commit("SET_TOKEN", result.data.token);
         }
@@ -60,7 +57,7 @@ export const actions = {
     },
 
     async googleLogin ({ commit }, payload) {
-        let result = await API.post(`/users/google_login`, payload);
+        let result = await this.$axios.post(`/users/google_login`, payload);
         if (result.data && result.data.token) {
             commit("SET_TOKEN", result.data.token);
         }
@@ -71,7 +68,7 @@ export const actions = {
     },
 
     async facebookLogin ({ commit }, payload) {
-        let result = await API.post(`/users/facebook_login`, payload);
+        let result = await this.$axios.post(`/users/facebook_login`, payload);
         if (result.data && result.data.token) {
             commit("SET_TOKEN", result.data.token);
         }

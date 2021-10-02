@@ -105,7 +105,7 @@
               <h2 class="heading-1">{{ $t("Popular") }}</h2>
             </v-col>
             <v-col cols="12" class="popular-video-list">
-              <client-only>
+              <!-- <client-only> -->
                 <VueSlickCarousel
                   v-bind="popularSlickSettings"
                   :ref="'popular'"
@@ -119,7 +119,7 @@
                     <VideoItem :video="item" @play-video="viewVideo" />
                   </div>
                 </VueSlickCarousel>
-              </client-only>
+              <!-- </client-only> -->
             </v-col>
             <template
               v-for="(category, categoryIndex) in categoryVideos.slice(0, 2)"
@@ -569,6 +569,7 @@ export default {
     },
     resizeHandler() {
       let itemCount = this.countPopularItem();
+      console.log(itemCount)
       if (itemCount == 4) {
         this.computedPopularItems = this.popularVideos.slice(this.topVideosCount + 1, this.topVideosCount + 9);
       } else if (itemCount == 3) {
@@ -615,6 +616,7 @@ export default {
     if (process.browser) {
       this.origin = window.location.origin;
     }
+    // this.resizeHandler();
     let itemCount = this.countPopularItem();
     let tempVideo = {
       title: null,
@@ -645,47 +647,17 @@ export default {
       window.addEventListener("resize", this.resizeHandler);
     }
   },
-  mounted() {
-    this.getFavoriteVideoList().then(res => {
-      this.favorites = Object.assign([], res.videos);
-    });
-    this.getCategoryList().then((res) => {
-      this.categoryItems = res.categories;
-      return Promise.all(this.categoryItems.slice(0, 99).map(category => {
-        let payload = {
-          categoryId: category.id,
-          limit: 6,
-          offset: 0,
-        };
-        return this.getCategoryVideoList(payload).then((response) => {
-          return {
-            videos: response.videos,
-            category: category
-          }
-        });
-      })).then(tmpCategoryVideos => {
-        tmpCategoryVideos = tmpCategoryVideos.sort(function(a,b) {
-          if (!a.category.order) {
-            return 1;
-          }
-          if (a.category.order > b.category.order) return 1;
-          else if (a.category.order == b.category.order) {
-            if (a.category.id > b.category.id) {
-              return 1;
-            } else {
-              return -1;
-            }
-          }
-          else return -1;
-        });
-        this.categoryVideos = Object.assign([], tmpCategoryVideos);
-      });
-    });
+  async fetch() {
+    var data = await this.getFavoriteVideoList();
+    this.favorites = Object.assign([], data.videos);
+    data = await this.getCategoryList();
+    this.categoryItems = Object.assign([], data.categories);
 
     this.getRecommendedVideos({ limit: 12 + this.topVideosCount }).then(
       (res) => {
         this.popularVideos = Object.assign([], res.videos);
-        this.resizeHandler();
+        // this.resizeHandler();
+        this.computedPopularItems = Object.assign([], this.popularVideos);
         this.selectedVideo = Object.assign({}, this.popularVideos[0]);
         this.setRecommendedVideoItems();
       }
@@ -694,6 +666,39 @@ export default {
     this.getRecommendedChannelList().then((res) => {
       this.recommendedChannels = Object.assign([], res.channels);
     });
+
+    return Promise.all(this.categoryItems.slice(0, 99).map(category => {
+      let payload = {
+        categoryId: category.id,
+        limit: 6,
+        offset: 0,
+      };
+      return this.getCategoryVideoList(payload).then((response) => {
+        return {
+          videos: response.videos,
+          category: category
+        }
+      });
+    })).then(tmpCategoryVideos => {
+      tmpCategoryVideos = tmpCategoryVideos.sort(function(a,b) {
+        if (!a.category.order) {
+          return 1;
+        }
+        if (a.category.order > b.category.order) return 1;
+        else if (a.category.order == b.category.order) {
+          if (a.category.id > b.category.id) {
+            return 1;
+          } else {
+            return -1;
+          }
+        }
+        else return -1;
+      });
+      this.categoryVideos = Object.assign([], tmpCategoryVideos);
+    });
+  },
+  mounted() {
+    this.resizeHandler();
   },
 };
 </script>

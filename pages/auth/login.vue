@@ -134,13 +134,13 @@ export default {
         }
         this.loginFailed = false;
         if (res.token) {
-          localStorage.setItem('token', res.token);
+          this.$cookies.set('token', res.token);
           let userInfo = {
             name: res.user.name,
             gender: res.user.gender,
             is_admin: res.user.is_admin
           }
-          localStorage.setItem('user', JSON.stringify(userInfo));
+          this.$cookies.set('user', JSON.stringify(userInfo));
           this.$router.push({ path: "/" });
         } else {
           // handle error
@@ -162,13 +162,13 @@ export default {
         }
         this.loginFailed = false;
         if (res.token) {
-          localStorage.setItem('token', res.token);
+          this.$cookies.set('token', res.token);
           let userInfo = {
             name: res.user.name,
             gender: res.user.gender,
             is_admin: res.user.is_admin
           }
-          localStorage.setItem('user', JSON.stringify(userInfo));
+          this.$cookies.set('user', JSON.stringify(userInfo));
           this.$router.push("/");
         } else {
           // handle error
@@ -189,13 +189,13 @@ export default {
         }
         this.loginFailed = false;
         if (res.token) {
-          localStorage.setItem('token', res.token);
+          this.$cookies.set('token', res.token);
           let userInfo = {
             name: res.user.name,
             gender: res.user.gender,
             is_admin: res.user.is_admin
           }
-          localStorage.setItem('user', JSON.stringify(userInfo));
+          this.$cookies.set('user', JSON.stringify(userInfo));
           this.$router.push("/");
         } else {
           // handle error

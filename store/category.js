@@ -1,6 +1,3 @@
-import APIService from "~/http.js";
-const API = new APIService();
-
 export const state = () => ({
     categories: []
 });
@@ -17,17 +14,17 @@ export const mutations = {
 
 export const actions = {
     async getCategoryList ({ commit }, payload = null) {
-        let result = await API.get('/categories.json?limit=99&offset=0');
+        let result = await this.$axios.get('/categories.json?limit=99&offset=0');
         return result.data;
     },
 
     async getCategoryDetail ({ commit }, payload = null) {
-        let result = await API.get(`/categories/${payload.categoryId}.json`);
+        let result = await this.$axios.get(`/categories/${payload.categoryId}.json`);
         return result.data;
     },
 
     async getCategoryVideoList ({ commit }, payload = null) {
-        let result = await API.get(`/categories/${payload.categoryId}/videos.json?limit=${payload.limit}&offset=${payload.offset}`);
+        let result = await this.$axios.get(`/categories/${payload.categoryId}/videos.json?limit=${payload.limit}&offset=${payload.offset}`);
         return result.data;
     },
 
