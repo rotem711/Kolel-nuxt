@@ -21,7 +21,7 @@
             </v-col>
             <v-col cols="12">
               <v-row>
-                <v-col v-for="(item, index) in videoItems" :key="index" cols="12" sm="6" md="4" lg="3" class="pa-1">
+                <v-col v-for="(item, index) in computedVideoItems" :key="index" cols="12" sm="6" md="4" lg="3" class="pa-1">
                   <VideoItem :video="item" @play-video="playVideo" />
                 </v-col>
               </v-row>
@@ -66,12 +66,17 @@ export default {
     categoryItems: [],
     isMobile: true,
     category: null,
-    showMoreRecentVideosButton: false
+    showMoreRecentVideosButton: false,
+    currentPage: 0
   }),
   computed: {
     getBackgroundImage() {
       return this.category && this.category.image != '' ? `url('${this.category.image}')` : `url${require('~/static/images/big/wall.jpg')}`;
     },
+    computedVideoItems() {
+      let itemsToShow = this.calculateItemPerRow() * this.currentPage * 6;
+      return this.videoItems.slice(0, itemsToShow);
+    }
   },
   methods: {
     ...mapActions("category", ["getCategoryList", "getCategoryDetail", "getCategoryVideoList"]),
@@ -80,7 +85,7 @@ export default {
     },
 
     calculateItemPerRow() {
-      let itemCount = 1; 
+      let itemCount = 1;
       if (process.browser) {
         for (let i = 0; i < this.breakpoints.length; i ++) {
           if (window.innerWidth > this.breakpoints[i].width && itemCount < this.breakpoints[i].itemsPerRow) {
@@ -92,9 +97,19 @@ export default {
     },
 
     loadRecentVideos() {
-      let itemCount = this.calculateItemPerRow();
+      let itemCount;
+      if (process.browser) {
+        itemCount = this.calculateItemPerRow();
+      } else {
+        itemCount = 4;
+      }
 
-      let limit = itemCount * 6 - this.videoItems.length % (itemCount * 6);
+      // let limit = itemCount * 6 - this.videoItems.length % (itemCount * 6);
+      let limit = (itemCount * 6 * (this.currentPage + 1)) - this.videoItems.length;
+      if (limit <= 0) {
+        this.currentPage ++;
+        return;
+      }
 
       let payload = {
         categoryId: this.$route.params.id,
@@ -102,13 +117,14 @@ export default {
         offset: this.videoItems.length > 0 && this.videoItems[0].id == null ? 0 : this.videoItems.length
       }
 
-      this.getCategoryVideoList(payload).then(res => {
+      return this.getCategoryVideoList(payload).then(res => {
         let items = res.videos;
         if (this.videoItems.length > 0 && !this.videoItems[0].id) {
           this.videoItems = [ ...items];
         } else {
           this.videoItems = [...this.videoItems, ...items];
         }
+        this.currentPage ++;
         if (this.videoItems.length < res.total) {
           this.showMoreRecentVideosButton = true;
         } else {
@@ -129,7 +145,7 @@ export default {
         this.categoryItems = res.categories;
       });
 
-      this.loadRecentVideos();
+      return this.loadRecentVideos();
     },
 
     showTempData() {
@@ -144,23 +160,23 @@ export default {
       this.videoItems = new Array(itemCount * 6).fill(tempVideo);
     }
   },
-  watch: {
-    "$route.params": {
-      handler: function(val) {
-        this.showTempData();
-        this.initialize();
-      },
-      deep: true
-    }
-  },
+  // watch: {
+  //   "$route.params": {
+  //     handler: function(val) {
+  //       this.showTempData();
+  //       this.initialize();
+  //     },
+  //     deep: true
+  //   }
+  // },
   created() {
     if (process.browser) {
       this.isMobile = window.innerWidth < 600 ? true : false;
     }
   },
   async fetch() {
-    this.showTempData();
-    this.initialize();
+    // this.showTempData();
+    await this.initialize();
   }
 };
 </script>

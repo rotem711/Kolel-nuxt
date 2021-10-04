@@ -77,18 +77,7 @@
                 <h2 class="heading-1">{{ $t("Favorites") }}</h2>
               </v-col>
               <v-col cols="12">
-                <!-- <client-only>
-                  <slick :options="slickSettings" :key="'favorite' + favorites.length">
-                    <div
-                      v-for="(item, index) in favorites"
-                      :key="'favorite' + favorites.length + item.id + '-' + index"
-                      class="px-1"
-                    >
-                      <VideoItem :video="item" @play-video="viewVideo" />
-                    </div>
-                  </slick>
-                </client-only> -->
-                <!-- <client-only>
+                <client-only>
                   <VueSlickCarousel v-bind="slickSettings" :key="'favorite' + favorites.length">
                     <div
                       v-for="(item, index) in favorites"
@@ -98,7 +87,7 @@
                       <VideoItem :video="item" @play-video="viewVideo" />
                     </div>
                   </VueSlickCarousel>
-                </client-only> -->
+                </client-only>
               </v-col>
             </template>
             <v-col cols="12">
