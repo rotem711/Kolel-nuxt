@@ -181,7 +181,7 @@ export default {
         channelId: this.currentVideoItem.channel_id
       }
 
-      this.getChannelVideoList(payload).then(res => {
+      return this.getChannelVideoList(payload).then(res => {
         this.videoItems = res.videos;
         this.videoItems = this.videoItems.map(item => ({
           ...item,
@@ -206,8 +206,8 @@ export default {
       this.isMobile = window.innerWidth < 600 ? true : false;
     }
   },
-  async mounted() {
-    this.initialize();
+  async fetch() {
+    await this.initialize();
   },
 };
 </script>
