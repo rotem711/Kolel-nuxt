@@ -23,7 +23,7 @@ export default {
     ...mapActions(["getTos"]),
   },
 
-  async mounted() {
+  async fetch() {
     this.content = await this.getTos();
   },
 };

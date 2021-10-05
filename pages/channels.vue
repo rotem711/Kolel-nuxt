@@ -2,9 +2,7 @@
   <v-container fluid>
     <v-row>
       <v-col cols="12" md="2">
-        <Sidebar 
-          :categoryViewItems="categoryItems"
-        />
+        <Sidebar />
       </v-col>
       <v-col cols="12" md="10">
         <v-container fluid>
@@ -18,7 +16,7 @@
                   cols="12"
                   md="6"
                   lg="4"
-                  v-for="(item, index) in channelItems"
+                  v-for="(item, index) in channelViewItems"
                   :key="'channel' + index"
                   class="channel-wrapper"
                 >
@@ -28,7 +26,7 @@
                 </v-col>
               </v-row>
             </v-col>
-            <v-col cols="12" class="text-center">
+            <v-col cols="12" class="text-center" v-if="showLoadMoreButton">
               <span class="mr-4 subtitle-1 font-weight-bold" aria-controls @click="loadMoreChannels">{{ $t('Show more') }}</span>
             </v-col>
           </v-row>
@@ -51,9 +49,7 @@ export default {
     ChannelItem
   },
   data: () => ({
-    channelViewItems: [],
     channelItems: [],
-    categoryItems: [],
     isMobile: true,
     breakpoints: [{
       width: 1263,
@@ -62,11 +58,18 @@ export default {
       width: 700,
       itemsPerRow: 2
     }],
+    currentPage: 0,
+    showLoadMoreButton: false
   }),
+  computed: {
+    channelViewItems() {
+      let itemsToShow = this.calculateItemsPerRow() * this.currentPage * 10;
+      return this.channelItems.slice(0, itemsToShow);
+    }
+  },
   methods: {
     ...mapActions("channel", ["getChannelList"]),
-    ...mapActions("category", ["getCategoryList"]),
-    async initialize() {
+    calculateItemsPerRow() {
       let itemCount = 1; 
       for (let i = 0; i < this.breakpoints.length; i ++) {
         if (process.browser) {
@@ -75,39 +78,23 @@ export default {
           }
         }
       }
-
-      let payload = {
-        limit: itemCount * 10,
-        offset: 0,
-        sort_by: 'title',
-        sort_dir: 'asc'
-      }
-
-      this.getChannelList(payload).then(res => {
-        this.channelItems = res.channels;
-      })
-
-      this.getCategoryList().then((res) => {
-        this.categoryItems = res.categories;
-      })
+      return itemCount;
+    },
+    async initialize() {
+      return this.loadMoreChannels();
     },
     loadMoreChannels() {
-      let itemCount = 1; 
-      for (let i = 0; i < this.breakpoints.length; i ++) {
-        if (process.browser) {
-          if (window.innerWidth > this.breakpoints[i].width && itemCount < this.breakpoints[i].itemsPerRow) {
-            itemCount = this.breakpoints[i].itemsPerRow;
-          }
-        }
+      let itemCount;
+
+      if (process.browser) {
+        itemCount = this.calculateItemsPerRow();
+      } else {
+        itemCount = 3;
       }
 
-      let pagination = itemCount * 10;
-      let limit = 0;
-
-      if (this.channelItems.length % pagination > 0) {
-        limit = pagination - (this.channelItems.length % pagination);
-      } else {
-        limit = pagination;
+      let limit = itemCount * 10 * (this.currentPage + 1) - this.channelItems.length;
+      if (limit <= 0) {
+        return;
       }
 
       let payload = {
@@ -117,8 +104,10 @@ export default {
         sort_dir: 'asc'
       }
 
-      this.getChannelList(payload).then(res => {
+      return this.getChannelList(payload).then(res => {
         this.channelItems = [...this.channelItems, ...res.channels];
+        this.currentPage ++;
+        this.showLoadMoreButton = res.total > this.channelItems.length;
       })
     }
   },
@@ -127,8 +116,8 @@ export default {
       this.isMobile = window.innerWidth < 600 ? true : false;
     }
   },
-  async mounted() {
-    this.initialize();
+  async fetch() {
+    await this.initialize();
   },
 };
 </script>

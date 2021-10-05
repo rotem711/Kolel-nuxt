@@ -83,11 +83,13 @@
 import VideoItem from "@/components/VideoItem";
 import Player from "@/components/Player";
 import Sidebar from "@/components/Sidebar";
+import RedirectMixin from "~/mixins/RedirectMixin";
 import { mapActions } from "vuex";
 
 export default {
   name: "Channel",
   layout: "DefaultLayout",
+  mixins: [ RedirectMixin ],
   components: {
     Player,
     VideoItem,
@@ -150,38 +152,47 @@ export default {
     categoryItems: [],
     isMobile: true,
     showMoreMostViewedButton: false,
-    showMoreRecentVideosButton: false 
+    showMoreRecentVideosButton: false,
+    mostViewedPage: 0,
+    recentVideoPage: 0
   }),
   methods: {
     ...mapActions('video', ['getVideoList']),
     ...mapActions('channel', ['getChannelDetail', 'getChannelVideoList', 'followChannel']),
     ...mapActions("category", ["getCategoryList"]),
     playVideo(video) {
-      this.$router.push('/videos/' + video.id)
+      this.goToVideoPage(video.id);
     },
 
     showRecentVideos() {
-      let itemCount = this.calculateItemPerRow();
+      let itemCount;
 
-      let limit = itemCount * 3 - this.videoItems.length % (itemCount * 3);
+      if (process.browser) {
+        itemCount = this.calculateItemPerRow();
+      } else {
+        itemCount = 4;
+      }
+
+      let limit = itemCount * 3 * (this.recentVideoPage + 1) - this.videoItems.length;
 
       let payload = {
         channelId: this.$route.params.id,
         limit: limit,
-        offset: this.videoItems[0].id == null ? 0 : this.videoItems.length,
+        offset: this.videoItems.length > 0 && this.videoItems[0].id == null ? 0 : this.videoItems.length,
       }
 
-      this.getChannelVideoList(payload).then(res => {
+      return this.getChannelVideoList(payload).then(res => {
         let items = res.videos;
         items = items.map(item => ({
           ...item,
           channel: this.channel
         }));
-        if (!this.videoItems[0].id) {
+        if (this.videoItems.length > 0 && !this.videoItems[0].id) {
           this.videoItems = [ ...items];
         } else {
           this.videoItems = [...this.videoItems, ...items];
         }
+        this.recentVideoPage ++;
         if (this.videoItems.length < res.total) {
           this.showMoreRecentVideosButton = true;
         } else {
@@ -217,28 +228,35 @@ export default {
     },
 
     showMostViewedVideos() {
-      let itemCount = this.calculateItemPerRow();
+      let itemCount;
 
-      let limit = itemCount * 3 - this.mostViewed.length % (itemCount * 3);
+      if (process.browser) {
+        itemCount = this.calculateItemPerRow();
+      } else {
+        itemCount = 4;
+      }
+
+      let limit = itemCount * 3 * (this.mostViewedPage + 1) - this.mostViewed.length;
 
       let mostViewedPayload = {
         limit: limit,
-        offset: this.mostViewed[0].id == null ? 0 : this.mostViewed.length,
+        offset: this.mostViewed.length > 0 && this.mostViewed[0].id == null ? 0 : this.mostViewed.length,
         sort_by: 'views',
         channel_id: this.$route.params.id
       }
 
-      this.getVideoList(mostViewedPayload).then(res => {
+      return this.getVideoList(mostViewedPayload).then(res => {
         let items = res.videos;
         items = items.map(item => ({
           ...item,
           channel: this.channel
         }));
-        if (!this.mostViewed[0].id) {
+        if (this.mostViewed.length > 0 && !this.mostViewed[0].id) {
           this.mostViewed = [ ...items];
         } else {
           this.mostViewed = [...this.mostViewed, ...items];
         }
+        this.mostViewedPage ++;
         if (this.mostViewed.length < res.total) {
           this.showMoreMostViewedButton = true;
         } else {
@@ -255,13 +273,14 @@ export default {
       let res = await this.getChannelDetail(payload);
       this.channel = res.channels;
 
-      this.getCategoryList().then((res) => {
-        this.categoryItems = res.categories;
-      });
+      res = await this.getCategoryList();
+      this.categoryItems = res.categories;
 
-      this.showRecentVideos();
+      await this.showRecentVideos();
 
-      this.showMostViewedVideos();
+      return this.showMostViewedVideos();
+
+      // return Promise.all([this.showRecentVideos, this.showMostViewedVideos]);
     },
 
     showTempData() {
@@ -277,32 +296,20 @@ export default {
       this.mostViewed = new Array(itemCount * 3).fill(tempVideo);
     }
   },
-  watch: {
-    "$route.params": {
-      handler: function(val) {
-        this.showTempData();
-        this.showMoreMostViewedButton = false;
-        this.showMoreRecentVideosButton = false;
-        this.initialize();
-      },
-      deep: true
-    }
-  },
   created() {
     this.showTempData();
     if (process.browser) {
       this.isMobile = window.innerWidth < 600 ? true : false;
     }
   },
-  async mounted() {
-    this.initialize();
+  async fetch() {
+    await this.initialize();
   },
 };
 </script>
 
 <style scoped>
   .banner {
-    /* background-image: url('../static/images/big/wall.jpg'); */
     background: linear-gradient(0deg, rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.6)), url('~/static/images/big/wall.jpg');
     height: 500px;
     width: 100%;

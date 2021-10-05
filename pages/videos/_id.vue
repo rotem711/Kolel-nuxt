@@ -44,7 +44,7 @@
           aria-controls
           class="d-flex video-item"
         >
-          <div class="mt-0 ml-2" @click="$router.push({ name: 'Video', params: { id: item.id }})">
+          <div class="mt-0 ml-2" @click="goToVideoPage(item.id)">
             <div v-if="item.thumb_url">
               <img class="video-item--image" :src="item.thumb_url" />
             </div>
@@ -54,7 +54,7 @@
             <h3 @click="playVideo(item)" class="video-title">
               {{ item.title }}
             </h3>
-            <p @click="$router.push({ name: 'Channel', params: { id: item.channel.id } })" class="mb-0 video-detail">
+            <p @click="goToChannelPage(item.channel.id)" class="mb-0 video-detail">
               <span>{{ item.channel.name }} </span> <br />
               {{ item.views | formatViews }} {{ $t('views') }} <span class="mx-0">&#183;</span> {{ item.publish_time | fromNow }}
             </p>
@@ -122,11 +122,12 @@
 import Player from "@/components/Player";
 import { mapActions } from "vuex";
 import CopyToClipboard from "~/mixins/CopyToClipboard";
+import RedirectMixin from "~/mixins/RedirectMixin";
 
 export default {
   name: "Video",
   layout: "DefaultLayout",
-  mixins: [ CopyToClipboard ],
+  mixins: [ CopyToClipboard, RedirectMixin ],
   components: {
     Player,
   },
@@ -155,14 +156,6 @@ export default {
     isMobile: true,
     shareDialog: false,
   }),
-  watch: {
-    "$route.params": {
-      handler: function(val) {
-        this.initialize();
-      },
-      deep: true
-    }
-  },
   methods: {
     ...mapActions("video", ["getRecommendedVideos", "getRecentVideoList", "getVideoDetail"]),
     ...mapActions("channel", ["getRecommendedChannelList", "getChannelList", "getChannelVideoList", "followChannel"]),

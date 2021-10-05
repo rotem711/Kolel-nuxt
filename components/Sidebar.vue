@@ -3,7 +3,7 @@
     <v-subheader>{{ $t("Channels") }}</v-subheader>
     <v-list-item-group>
       <v-list-item
-        @click="$router.push('/channel/' + item.id)"
+        @click="goToChannelPage(item.id)"
         v-for="(item, i) in channels"
         :key="i"
       >
@@ -15,13 +15,13 @@
         </v-list-item-content>
       </v-list-item>
     </v-list-item-group>
-    <v-btn text class="blue--text" id="allChannels" @click="showAllChannels">{{ $t("All channels") }}</v-btn>
+    <v-btn text class="blue--text" id="allChannels" @click="goToAllChannelsPage">{{ $t("All channels") }}</v-btn>
     <v-subheader>{{ $t("Topics") }}</v-subheader>
     <v-list-item-group>
       <v-list-item
         v-for="(item, i) in categories"
         :key="i"
-        @click="$router.push('/category/' + item.id)"
+        @click="goToCategoryPage(item.id)"
       >
         <v-list-item-content class="py-2">
           <v-list-item-title v-text="item.name"></v-list-item-title>
@@ -33,17 +33,16 @@
 
 <script>
 import { mapActions, mapGetters } from "vuex";
+import RedirectMixin from "~/mixins/RedirectMixin";
 export default {
   name: "Sidebar",
+  mixins: [RedirectMixin],
   computed: {
     ...mapGetters("channel", ["channels"]),
     ...mapGetters("category", ["categories"]),
   },
   methods: {
-    ...mapActions("channel", ["getChannelList"]),
-    showAllChannels() {
-      this.$router.push('/channels');
-    }
+    ...mapActions("channel", ["getChannelList"])
   }
 };
 </script>

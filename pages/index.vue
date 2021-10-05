@@ -56,12 +56,7 @@
                       {{ item.title }}
                     </v-list-item-title>
                     <v-list-item-subtitle
-                      @click="
-                        $router.push({
-                          name: 'Channel',
-                          params: { id: item.channel.id },
-                        })
-                      "
+                      @click="goToChannelPage(item.channel.id)"
                     >
                       <span>{{ item.channel.name }} </span> <br />
                       {{ item.publish_time | fromNow }}
@@ -78,7 +73,7 @@
               </v-col>
               <v-col cols="12">
                 <client-only>
-                  <VueSlickCarousel v-bind="slickSettings" :key="'favorite' + favorites.length">
+                  <VueSlickCarousel v-bind="slickSettings">
                     <div
                       v-for="(item, index) in favorites"
                       :key="'favorite' + favorites.length + item.id + '-' + index"
@@ -120,13 +115,13 @@
                 <h2 class="heading-1" v-if="category.category.id">
                   <span
                     aria-controls
-                    @click="goToCategory(category.category.id)"
+                    @click="goToCategoryPage(category.category.id)"
                   >{{ category.category.name }}
                   </span>
                   <span
                     class="mr-4 subtitle-1 blue--text"
                     aria-controls
-                    @click="goToCategory(category.category.id)"
+                    @click="goToCategoryPage(category.category.id)"
                   >
                     {{ $t("Show all") }}
                   </span>
@@ -185,13 +180,13 @@
                 <h2 class="heading-1" v-if="category.category.id">
                   <span
                     aria-controls
-                    @click="goToCategory(category.category.id)"
+                    @click="goToCategoryPage(category.category.id)"
                     >{{ category.category.name }}
                   </span>
                   <span
                     class="mr-4 subtitle-1 blue--text"
                     aria-controls
-                    @click="goToCategory(category.category.id)"
+                    @click="goToCategoryPage(category.category.id)"
                   >
                     {{ $t("Show all") }}
                   </span>
@@ -290,11 +285,12 @@ import VideoItem from "~/components/VideoItem";
 // import RecommendedChannel from "~/components/RecommendedChannel";
 // import Player from "~/components/Player";
 import CopyToClipboard from "~/mixins/CopyToClipboard";
+import RedirectMixin from "~/mixins/RedirectMixin";
 
 export default {
   name: "Landing",
   layout: 'DefaultLayout',
-  mixins: [ CopyToClipboard ],
+  mixins: [ CopyToClipboard, RedirectMixin ],
   components: {
     // VueSlickCarousel,
     VideoItem,
@@ -501,7 +497,7 @@ export default {
     ...mapActions("channel", ["getRecommendedChannelList", "getChannelList"]),
     ...mapActions("category", ["getCategoryVideoList", "getCategoryList"]),
     viewVideo(video) {
-      this.$router.push({ name: "Video", params: { id: video.id } });
+      this.goToVideoPage(video.id);
     },
     playVideo(video) {
       this.selectedVideo = Object.assign({}, video);
@@ -566,9 +562,6 @@ export default {
       } else {
         this.computedPopularItems = Object.assign([], this.popularVideos);
       }
-    },
-    goToCategory(categoryId) {
-      this.$router.push({ name: "Category", params: { id: categoryId } });
     },
     slickCarouselChanged(slideIndex, categoryId) {
       if (slideIndex == 0) {
@@ -642,19 +635,15 @@ export default {
     data = await this.getCategoryList();
     this.categoryItems = Object.assign([], data.categories);
 
-    this.getRecommendedVideos({ limit: 12 + this.topVideosCount }).then(
-      (res) => {
-        this.popularVideos = Object.assign([], res.videos);
-        // this.resizeHandler();
-        this.computedPopularItems = Object.assign([], this.popularVideos);
-        this.selectedVideo = Object.assign({}, this.popularVideos[0]);
-        this.setRecommendedVideoItems();
-      }
-    );
+    data = await this.getRecommendedVideos({ limit: 12 + this.topVideosCount });
+    this.popularVideos = Object.assign([], data.videos);
+    // this.resizeHandler();
+    this.computedPopularItems = Object.assign([], this.popularVideos);
+    this.selectedVideo = Object.assign({}, this.popularVideos[0]);
+    this.setRecommendedVideoItems();
 
-    this.getRecommendedChannelList().then((res) => {
-      this.recommendedChannels = Object.assign([], res.channels);
-    });
+    data = await this.getRecommendedChannelList();
+    this.recommendedChannels = Object.assign([], data.channels);
 
     return Promise.all(this.categoryItems.slice(0, 99).map(category => {
       let payload = {

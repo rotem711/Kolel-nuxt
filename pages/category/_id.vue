@@ -40,10 +40,12 @@
 import VideoItem from "~/components/VideoItem";
 import Sidebar from "~/components/Sidebar";
 import { mapActions } from "vuex";
+import RedirectMixin from "~/mixins/RedirectMixin";
 
 export default {
   name: "Category",
   layout: "DefaultLayout",
+  mixins: [ RedirectMixin ],
   components: {
     VideoItem,
     Sidebar
@@ -81,7 +83,7 @@ export default {
   methods: {
     ...mapActions("category", ["getCategoryList", "getCategoryDetail", "getCategoryVideoList"]),
     playVideo(video) {
-      this.$router.push('/videos/' + video.id)
+      this.goToVideoPage(video.id);
     },
 
     calculateItemPerRow() {
@@ -104,7 +106,6 @@ export default {
         itemCount = 4;
       }
 
-      // let limit = itemCount * 6 - this.videoItems.length % (itemCount * 6);
       let limit = (itemCount * 6 * (this.currentPage + 1)) - this.videoItems.length;
       if (limit <= 0) {
         this.currentPage ++;
@@ -160,22 +161,12 @@ export default {
       this.videoItems = new Array(itemCount * 6).fill(tempVideo);
     }
   },
-  // watch: {
-  //   "$route.params": {
-  //     handler: function(val) {
-  //       this.showTempData();
-  //       this.initialize();
-  //     },
-  //     deep: true
-  //   }
-  // },
   created() {
     if (process.browser) {
       this.isMobile = window.innerWidth < 600 ? true : false;
     }
   },
   async fetch() {
-    // this.showTempData();
     await this.initialize();
   }
 };

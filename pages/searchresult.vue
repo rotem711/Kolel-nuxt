@@ -14,7 +14,7 @@
         >
           <div
             class="mt-0 ml-2"
-            @click="$router.push({ name: 'Video', params: { id: item.id } })"
+            @click="goToVideoPage(item.id)"
           >
             <div v-if="item.thumb_url">
               <img class="video-item--image" :src="item.thumb_url" />
@@ -26,12 +26,7 @@
               {{ item.title }}
             </h3>
             <p
-              @click="
-                $router.push({
-                  name: 'Channel',
-                  params: { id: item.channel.id },
-                })
-              "
+              @click="goToChannelPage(item.channel.id)"
               class="mb-0 video-detail"
             >
               <span>{{ item.channel.name }} </span> <br />
@@ -56,10 +51,12 @@
 
 <script>
 import { mapActions } from "vuex";
+import RedirectMixin from "~/mixins/RedirectMixin";
 
 export default {
   name: "SearchResult",
   layout: "DefaultLayout",
+  mixins: [ RedirectMixin ],
   data: () => ({
     videoItems: [],
     keyword: null,
