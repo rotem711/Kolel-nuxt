@@ -489,6 +489,24 @@ export default {
     favorites: [],
     shareDialog: false
   }),
+  head() {
+    const title = "כולל - Kolel";
+    return {
+      title: title,
+      meta: [
+        { name: 'title', content: title },
+        // { hid: 'description', name: 'description', content: description },
+
+        { hid: 'og:url', name: 'og:url', content: `https://kolel.org/` },
+        { hid: 'og:title', name: 'og:title', content: title },
+        { hid: 'og:site_name', name: 'og:site_name', content: title },
+        
+        // { hid: 'og:description', name: 'og:description', content: description },
+        // { hid: 'image', name: 'image', content: image, property: 'og:image' },
+        // { hid: 'og:image', name: 'og:image', content: image },
+      ]
+    };
+  },
   computed: {
     ...mapGetters("auth", ["token", "user"])
   },

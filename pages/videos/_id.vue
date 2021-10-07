@@ -156,6 +156,25 @@ export default {
     isMobile: true,
     shareDialog: false,
   }),
+  head() {
+    const title = this.currentVideoItem.title;
+    const image = this.currentVideoItem.thumb_url;
+    return {
+      title: title,
+      meta: [
+        { name: 'title', content: title },
+        // { hid: 'description', name: 'description', content: description },
+
+        { hid: 'og:url', name: 'og:url', content: `https://kolel.org/videos/${this.currentVideoItem.id}` },
+        { hid: 'og:title', name: 'og:title', content: title },
+        { hid: 'og:site_name', name: 'og:site_name', content: title },
+        
+        // { hid: 'og:description', name: 'og:description', content: description },
+        { hid: 'image', name: 'image', content: image, property: 'og:image' },
+        { hid: 'og:image', name: 'og:image', content: image },
+      ]
+    };
+  },
   methods: {
     ...mapActions("video", ["getRecommendedVideos", "getRecentVideoList", "getVideoDetail"]),
     ...mapActions("channel", ["getRecommendedChannelList", "getChannelList", "getChannelVideoList", "followChannel"]),

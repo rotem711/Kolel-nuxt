@@ -71,6 +71,25 @@ export default {
     showMoreRecentVideosButton: false,
     currentPage: 0
   }),
+  head() {
+    const title = this.category.name;
+    const image = this.getBackgroundImage;
+    return {
+      title: title,
+      meta: [
+        { name: 'title', content: title },
+        // { hid: 'description', name: 'description', content: description },
+
+        { hid: 'og:url', name: 'og:url', content: `https://kolel.org/categories/${this.category.id}` },
+        { hid: 'og:title', name: 'og:title', content: title },
+        { hid: 'og:site_name', name: 'og:site_name', content: title },
+        
+        // { hid: 'og:description', name: 'og:description', content: description },
+        { hid: 'image', name: 'image', content: image, property: 'og:image' },
+        { hid: 'og:image', name: 'og:image', content: image },
+      ]
+    };
+  },
   computed: {
     getBackgroundImage() {
       return this.category && this.category.image != '' ? `url('${this.category.image}')` : `url${require('~/static/images/big/wall.jpg')}`;
