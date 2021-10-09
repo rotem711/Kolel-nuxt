@@ -56,11 +56,11 @@
     </v-btn>
     <v-spacer class="d-md-block d-none"/>
     <div class="d-md-block d-none" v-if="!user">
-      <nuxt-link to="/auth/login" class="grey--text">
+      <nuxt-link to="/auth/login" class="grey--text text-decoration-none">
         {{ $t("Login") }}
       </nuxt-link>
       <span class="mx-4">&#183;</span>
-      <nuxt-link to="/auth/signup" class="grey--text">
+      <nuxt-link to="/auth/signup" class="grey--text text-decoration-none">
         {{ $t("Register") }}
       </nuxt-link>
     </div>

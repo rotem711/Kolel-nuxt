@@ -80,7 +80,7 @@ export default {
         { name: 'title', content: title },
         // { hid: 'description', name: 'description', content: description },
 
-        { hid: 'og:url', name: 'og:url', content: `https://kolel.org/categories/${this.category.id}` },
+        { hid: 'og:url', name: 'og:url', content: `https://kolel.org/category/${this.category.id}` },
         { hid: 'og:title', name: 'og:title', content: title },
         { hid: 'og:site_name', name: 'og:site_name', content: title },
         

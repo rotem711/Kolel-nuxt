@@ -7,7 +7,7 @@
         v-for="(item, i) in channels"
         :key="i"
       >
-        <v-list-item-avatar color="#00A1FF" size="30" class="my-0">
+        <v-list-item-avatar color="grey" size="30" class="my-0">
           <v-img :src="item.image"></v-img>
         </v-list-item-avatar>
         <v-list-item-content class="py-2">

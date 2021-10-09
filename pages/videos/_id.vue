@@ -61,6 +61,15 @@
           </div>
         </div>
       </v-col>
+      <v-col cols="12" class="text-center" v-if="showMoreButton">
+        <span
+          class="mr-4 subtitle-1 font-weight-bold"
+          aria-controls
+          @click="loadVideos"
+        >
+          {{ $t("Show more") }}
+        </span>
+      </v-col>
     </v-row>
     <v-dialog
       v-model="shareDialog"
@@ -155,6 +164,7 @@ export default {
     videoItems: [],
     isMobile: true,
     shareDialog: false,
+    showMoreButton: false,
   }),
   head() {
     const title = this.currentVideoItem.title;
@@ -192,21 +202,27 @@ export default {
       }
       this.recentVideoCount = count;
     },
+    loadVideos() {
+      let payload = {
+        channelId: this.currentVideoItem.channel_id,
+        offset: this.videoItems.length,
+      };
+
+      return this.getChannelVideoList(payload).then((res) => {
+        let tmp = res.videos;
+        tmp = tmp.map((item) => ({
+          ...item,
+          channel: this.currentVideoItem.channel,
+        }));
+        this.videoItems = [...this.videoItems, ...tmp];
+        this.showMoreButton = this.videoItems.length < res.total;
+      });
+    },
     async initialize() {
       let res = await this.getVideoDetail(this.$route.params.id);
       this.currentVideoItem = Object.assign({}, res.video);
 
-      let payload = {
-        channelId: this.currentVideoItem.channel_id
-      }
-
-      return this.getChannelVideoList(payload).then(res => {
-        this.videoItems = res.videos;
-        this.videoItems = this.videoItems.map(item => ({
-          ...item,
-          channel: this.currentVideoItem.channel
-        }))
-      })
+      return this.loadVideos();
     },
     follow() {
       let payload = {
