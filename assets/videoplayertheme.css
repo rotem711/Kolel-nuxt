@@ -85,10 +85,17 @@
   flex: unset;
   font-size: 1.75em;
   display: block!important;
+  margin-top: 10px;
+  margin-bottom: 10px;
+  height: calc(100% - 20px);
+}
+
+.vjs-theme-city .vjs-playback-rate.vjs-menu-button-popup .vjs-menu .vjs-menu-content {
+  bottom: 1em;
 }
 
 .vjs-theme-city .vjs-playback-rate .vjs-playback-rate-value {
-  background-image: url('../static/camera-timer.png');
+  background-image: url('../assets/camera-timer.png');
   background-size: 24px;
   background-position: center;
   text-indent: 1000px;
