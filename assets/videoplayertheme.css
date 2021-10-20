@@ -95,7 +95,7 @@
 }
 
 .vjs-theme-city .vjs-playback-rate .vjs-playback-rate-value {
-  background-image: url('../assets/camera-timer.png');
+  background-image: url('../static/camera-timer.png');
   background-size: 24px;
   background-position: center;
   text-indent: 1000px;

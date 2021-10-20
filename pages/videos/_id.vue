@@ -3,14 +3,13 @@
     <v-row>
       <v-col cols="12" class="position-relative py-10">
         <div class="black black-background"></div>
-        <Player
-          :videoUrl="currentVideoItem ? currentVideoItem.video_url : null"
-          :thumbnails="thumbnails"
-          :thumb_url="currentVideoItem ? currentVideoItem.thumb_url : null"
-          @reset-height="resetHeight"
-          :autoplayitem="true"
-          :video="currentVideoItem"
-        />
+          <Player
+            :videoUrl="currentVideoItem ? currentVideoItem.video_url : null"
+            :thumbnails="thumbnails"
+            :thumb_url="currentVideoItem ? currentVideoItem.thumb_url : null"
+            :autoplayitem="true"
+            :video="currentVideoItem"
+          />
       </v-col>
     </v-row>
     <v-row class="">
@@ -189,19 +188,6 @@ export default {
     ...mapActions("video", ["getRecommendedVideos", "getRecentVideoList", "getVideoDetail"]),
     ...mapActions("channel", ["getRecommendedChannelList", "getChannelList", "getChannelVideoList", "followChannel"]),
     ...mapActions("category", ["getCategoryVideoList"]),
-    resetHeight(playerHeight) {
-      let count;
-      if (process.browser) {
-        if (window.innerWidth > 1400) {
-          count = Math.floor(playerHeight / 105);
-        } else if (window.innerWidth > 1100) {
-          count = Math.floor(playerHeight / 95);
-        } else {
-          count = Math.floor(playerHeight / 85);
-        }
-      }
-      this.recentVideoCount = count;
-    },
     loadVideos() {
       let payload = {
         channelId: this.currentVideoItem.channel_id,

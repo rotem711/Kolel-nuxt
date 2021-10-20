@@ -93,6 +93,8 @@ export default {
       } 
     })
 
+    this.playVideo(this.videoUrl);
+
     this.player.on('ratechange', this.playerRateChanged);
     this.player.on('play', this.playing);
     this.player.on('pause', this.stopInterval);
